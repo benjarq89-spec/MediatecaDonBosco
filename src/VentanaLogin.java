@@ -39,9 +39,18 @@ public class VentanaLogin extends JFrame {
         String user = txtUsuario.getText();
         String pass = new String(txtClave.getPassword());
 
-        if (user.equals("admin") && pass.equals("1234")) {
-            JOptionPane.showMessageDialog(this, "¡Bienvenido Administrador!");
-            // Aquí luego abriremos la ventana principal
+        // 1. Llamamos a la herramienta que creamos (UsuarioDAO)
+        UsuarioDAO dao = new UsuarioDAO();
+
+        // 2. Verificamos contra la base de datos de la Don Bosco
+        if (dao.validarLogin(user, pass)) {
+            JOptionPane.showMessageDialog(this, "¡Bienvenido al sistema!");
+
+            // Aquí es donde en el futuro abriremos el Panel Principal
+            // VentanaPrincipal principal = new VentanaPrincipal();
+            // principal.setVisible(true);
+
+            this.dispose(); // Esto cierra la ventana de login al entrar
         } else {
             JOptionPane.showMessageDialog(this, "Usuario o clave incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
         }

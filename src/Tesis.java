@@ -18,4 +18,8 @@ public class Tesis extends Material {
     public void mostrarDetalles() {
         System.out.println("Tesis: " + titulo + " | Autor: " + autor + " | Carrera: " + carrera);
     }
+    public String getAutor() { return autor; }
+    public String getFacultad() { return facultad; }
+    public String getCarrera() { return carrera; }
+    public int getAnioGraduacion() { return anioGraduacion; }
 }

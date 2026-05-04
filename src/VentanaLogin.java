@@ -1,64 +1,46 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class VentanaLogin extends JFrame {
-    private JTextField txtUsuario;
-    private JPasswordField txtClave;
-    private JButton btnEntrar;
+    private JTextField txtUser = new JTextField();
+    private JPasswordField txtPass = new JPasswordField();
+    private JButton btnLogin = new JButton("Entrar");
 
     public VentanaLogin() {
-        setTitle("Login - Mediateca Don Bosco");
-        setSize(400, 300);
+        // Al abrir la ventana, nos aseguramos que la DB esté lista
+        new UsuarioDAO().inicializarSistema();
+
+        setTitle("Login - Mediateca UDB");
+        setSize(300, 250);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Centrar en pantalla
-        setLayout(new GridLayout(4, 1, 10, 10));
+        setLocationRelativeTo(null);
+        setLayout(new GridLayout(3, 1));
 
-        add(new JLabel("Usuario:", SwingConstants.CENTER));
-        txtUsuario = new JTextField();
-        add(txtUsuario);
+        add(new JLabel("Usuario:")); add(txtUser);
+        add(new JLabel("Clave:")); add(txtPass);
+        add(btnLogin);
 
-        add(new JLabel("Contraseña:", SwingConstants.CENTER));
-        txtClave = new JPasswordField();
-        add(txtClave);
-
-        btnEntrar = new JButton("Iniciar Sesión");
-        add(btnEntrar);
-
-        // EVENTO DEL BOTÓN
-        btnEntrar.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                validarAcceso();
-            }
-        });
+        // Acción del botón
+        btnLogin.addActionListener(e -> ejecutarLogin());
     }
 
-    private void validarAcceso() {
-        String user = txtUsuario.getText();
-        String pass = new String(txtClave.getPassword());
+    private void ejecutarLogin() {
+        String u = txtUser.getText();
+        String p = new String(txtPass.getPassword());
 
-        // 1. Llamamos a la herramienta que creamos (UsuarioDAO)
-        UsuarioDAO dao = new UsuarioDAO();
+        if (new UsuarioDAO().login(u, p)) {
+            JOptionPane.showMessageDialog(this, "¡Bienvenido, " + u + "!");
 
-        // 2. Verificamos contra la base de datos de la Don Bosco
-        if (dao.validarLogin(user, pass)) {
-            JOptionPane.showMessageDialog(this, "¡Bienvenido al sistema!");
+            MenuPrincipal menu = new MenuPrincipal(); // Creamos la instancia del menú
+            menu.setVisible(true);                   // La hacemos visible
+            this.dispose();                          // Cerramos la ventana de login
 
-            // Aquí es donde en el futuro abriremos el Panel Principal
-            // VentanaPrincipal principal = new VentanaPrincipal();
-            // principal.setVisible(true);
-
-            this.dispose(); // Esto cierra la ventana de login al entrar
         } else {
-            JOptionPane.showMessageDialog(this, "Usuario o clave incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Credenciales incorrectas.");
         }
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            new VentanaLogin().setVisible(true);
-        });
+        new VentanaLogin().setVisible(true);
     }
 }

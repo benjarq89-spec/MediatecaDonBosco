@@ -31,5 +31,12 @@ public class Revista extends Material{
     public void mostrarDetalles() {
         System.out.println("Revista: " + titulo + "  | Edición: " + numEdicion + " | ISSN: " + issn);
     }
-
+    public String getIssn() { return issn; }
+    public String getEditorial() { return editorial; }
+    public String getPeriodicidad() { return periodicidad; }
+    public int getNumEdicion() { return numEdicion; }
+    public int getFechaPublicacion() { return fechaPublicacion; }
+    public String getTematica() { return tematica; }
+    public String getIdioma() { return idioma; }
+    public String getPaisOrigen() { return paisOrigen; }
 }

@@ -18,4 +18,8 @@ public class CD extends Material {
     public void mostrarDetalles() {
         System.out.println("CD: " + titulo + " | Artista: " + artista + " | Canciones: " + numCanciones);
     }
+    public String getArtista() { return artista; }
+    public String getGenero() { return genero; }
+    public String getDuracion() { return duracion; }
+    public int getNumCanciones() { return numCanciones; }
 }

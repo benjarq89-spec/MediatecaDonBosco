@@ -15,4 +15,11 @@ public abstract class Material {
 
     // Método que todos los hijos deben tener, pero cada uno lo hace distinto
     public abstract void mostrarDetalles();
+
+    // Estos van AQUÍ, en la clase Material
+    public String getCodigoId() { return codigoId; }
+    public String getTitulo() { return titulo; }
+    public String getUbicacionFisica() { return ubicacionFisica; }
+    public int getEjemplaresTotales() { return ejemplaresTotales; }
 }
+

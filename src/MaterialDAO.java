@@ -1,44 +1,68 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MaterialDAO {
-    public void insertarMaterial(Material m) {
-        String sql = "INSERT INTO materiales (codigo_id, titulo, ubicacion_fisica, ejemplares_totales, tipo_material) VALUES (?, ?, ?, ?, ?)";
-        try (Connection cn = Conexion.getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setString(1, m.codigoId);
-            ps.setString(2, m.titulo);
-            ps.setString(3, m.ubicacionFisica);
-            ps.setInt(4, m.ejemplaresTotales);
-            // Aquí definimos el tipo según la clase
-            ps.setString(5, m.getClass().getSimpleName());
+    // --- MÉTODOS DE INSERCIÓN (Para guardar) ---
 
-            ps.executeUpdate();
-            System.out.println("Material guardado en la base de datos.");
-        } catch (SQLException e) {
-            System.out.println("Error al insertar: " + e.getMessage());
-        }
+    public void insertarLibro(Libro l) {
+        String sql = "INSERT INTO libro (codigoId, titulo, ubicacionFisica, ejemplaresTotales, autor, editorial, isbn) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        ejecutarUpdate(sql, l.getCodigoId(), l.getTitulo(), l.getUbicacionFisica(), l.getEjemplaresTotales(), l.getAutor(), l.getEditorial(), l.getIsbn());
     }
-    public void buscarMaterial(String tituloBuscar) {
-        String sql = "SELECT * FROM materiales WHERE titulo LIKE ?";
-        try (Connection cn = Conexion.getConexion();
-             PreparedStatement ps = cn.prepareStatement(sql)) {
 
-            ps.setString(1, "%" + tituloBuscar + "%");
-            ResultSet rs = ps.executeQuery();
+    public void insertarRevista(Revista r) {
+        String sql = "INSERT INTO revista (codigoId, titulo, ubicacionFisica, ejemplaresTotales, editorial, periodicidad, issn) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        ejecutarUpdate(sql, r.getCodigoId(), r.getTitulo(), r.getUbicacionFisica(), r.getEjemplaresTotales(), r.getEditorial(), r.getPeriodicidad(), r.getIssn());
+    }
 
-            System.out.println("--- Resultados de Búsqueda ---");
+    public void insertarCD(CD cd) {
+        String sql = "INSERT INTO cd (codigoId, titulo, ubicacionFisica, ejemplaresTotales, artista, genero, duracion) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        ejecutarUpdate(sql, cd.getCodigoId(), cd.getTitulo(), cd.getUbicacionFisica(), cd.getEjemplaresTotales(), cd.getArtista(), cd.getGenero(), cd.getDuracion());
+    }
+
+    public void insertarTesis(Tesis t) {
+        String sql = "INSERT INTO tesis (codigoId, titulo, ubicacionFisica, ejemplaresTotales, autor, facultad, carrera, anioGraduacion) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        ejecutarUpdate(sql, t.getCodigoId(), t.getTitulo(), t.getUbicacionFisica(), t.getEjemplaresTotales(), t.getAutor(), t.getFacultad(), t.getCarrera(), t.getAnioGraduacion());
+    }
+
+    // --- MÉTODOS DE CONSULTA (Para la tabla) ---
+
+    public List<Object[]> consultarLibros() {
+        return ejecutarConsulta("SELECT codigoId, titulo, autor, editorial, isbn FROM libro");
+    }
+
+    public List<Object[]> consultarRevistas() {
+        return ejecutarConsulta("SELECT codigoId, titulo, periodicidad, editorial, issn FROM revista");
+    }
+
+    public List<Object[]> consultarCDs() {
+        return ejecutarConsulta("SELECT codigoId, titulo, artista, genero, duracion FROM cd");
+    }
+
+    public List<Object[]> consultarTesis() {
+        return ejecutarConsulta("SELECT codigoId, titulo, autor, facultad, carrera FROM tesis");
+    }
+
+    // --- MÉTODOS AUXILIARES ---
+
+    private void ejecutarUpdate(String sql, Object... params) {
+        try (Connection con = Conexion.getConexion(); PreparedStatement ps = con.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) ps.setObject(i + 1, params[i]);
+            ps.executeUpdate();
+        } catch (SQLException e) { System.out.println("Error en inserción: " + e.getMessage()); }
+    }
+
+    private List<Object[]> ejecutarConsulta(String sql) {
+        List<Object[]> lista = new ArrayList<>();
+        try (Connection con = Conexion.getConexion(); PreparedStatement ps = con.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            int columnas = rs.getMetaData().getColumnCount();
             while (rs.next()) {
-                System.out.println("Título: " + rs.getString("titulo") +
-                        " | Ubicación: " + rs.getString("ubicacion_fisica") +
-                        " | Disponibles: " + (rs.getInt("ejemplares_totales") - rs.getInt("ejemplares_prestados")));
+                Object[] fila = new Object[columnas];
+                for (int i = 0; i < columnas; i++) fila[i] = rs.getObject(i + 1);
+                lista.add(fila);
             }
-        } catch (SQLException e) {
-            System.out.println("Error al buscar: " + e.getMessage());
-        }
-    } // Esta llave cierra el método buscarMaterial
-
+        } catch (SQLException e) { System.out.println("Error en consulta: " + e.getMessage()); }
+        return lista;
+    }
 }

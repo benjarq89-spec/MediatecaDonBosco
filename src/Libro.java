@@ -20,4 +20,10 @@ public class Libro extends Material {
     public void mostrarDetalles() {
         System.out.println("ID: " + codigoId + " | Título: " + titulo + " | Autor: " + autor);
     }
+    // Estos son los "Getters" que el DAO necesita para leer los datos
+    public String getAutor() { return autor; }
+    public int getNumPaginas() { return numPaginas; }
+    public String getEditorial() { return editorial; }
+    public String getIsbn() { return isbn; }
+    public int getAnioPublicacion() { return anioPublicacion; }
 }

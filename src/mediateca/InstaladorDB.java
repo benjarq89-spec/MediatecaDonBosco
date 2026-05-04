@@ -1,3 +1,5 @@
+package mediateca;
+
 import java.sql.*;
 
 public class InstaladorDB {

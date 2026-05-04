@@ -1,3 +1,5 @@
+package mediateca;
+
 public abstract class Material {
     protected String codigoId;
     protected String titulo;
